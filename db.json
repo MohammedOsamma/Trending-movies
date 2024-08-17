@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "first_name": "Mohamed",
+      "last_name": "Osama",
+      "email": "mo@gmail.com",
+      "password": "123456",
+      "age": "25",
+      "id": 1
+    },
+    {
+      "first_name": "Mohamed",
+      "last_name": "Osama",
+      "email": "mo@gmail.com",
+      "password": "123456",
+      "age": "25",
+      "id": 2
+    },
+    {
+      "first_name": "Mohamed",
+      "last_name": "Osama",
+      "email": "mo@gmail.com",
+      "password": "123456",
+      "age": "25",
+      "id": 3
+    },
+    {
+      "first_name": "Mohamed",
+      "last_name": "Osama",
+      "email": "mo@gmail.com",
+      "password": "123456",
+      "age": "25",
+      "id": 4
+    }
+  ]
+}
