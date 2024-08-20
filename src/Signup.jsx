@@ -35,7 +35,30 @@ export default function Signup() {
   }
   // _______________________________________________________
 
-  async function submitRegisterFrom(event) {
+  // async function submitRegisterFrom(event) {
+  //   event.preventDefault();
+
+  //   let validateResult = validationRegisterForm();
+
+  //   if (validateResult.error) {
+  //     setErrorsList(validateResult.error.details);
+  //   } else {
+  //     let { data } = await Axios.post("http://localhost:5000/signup", user);
+  //     if (data.message === "User signed up successfully") {
+  //       navigate("/login");
+  //     } else if (data.status === 400) {
+  //       alert("Hellos");
+  //     }
+  //     // if (data.messaege === "User already exists.") {
+  //     //   console.log("hello ");
+
+  //     //   // setError(new Error(data.message));
+  //     //   // setError(data.message); // Set the error state with the response message
+  //     // }
+  //   }
+  // }
+
+  async function submitRegisterForm(event) {
     event.preventDefault();
 
     let validateResult = validationRegisterForm();
@@ -43,15 +66,51 @@ export default function Signup() {
     if (validateResult.error) {
       setErrorsList(validateResult.error.details);
     } else {
-      let { data } = await Axios.post("http://localhost:5000/signup", user);
-      if (data.message === "User signed up successfully") {
-        navigate("/login");
-      } else {
-        setError(data.message); // Set the error state with the response message
+      try {
+        let { data } = await Axios.post("http://localhost:5000/signup", user);
+
+        if (data.message === "User signed up successfully") {
+          navigate("/login");
+        }
+      } catch (error) {
+        if (error.response) {
+          // Server responded with a status other than 200 range
+          if (error.response.status === 400) {
+            // setError(error.response.data.message);
+            Swal.fire("Error", error.response.data.message, "error");
+          } else if (error.response.status === 404) {
+            // setError("Server not found. Please try again later.");
+            Swal.fire(
+              "Error",
+              "Server not found. Please try again later.",
+              "error"
+            );
+          } else {
+            setError("An unexpected error occurred. Please try again.");
+            Swal.fire(
+              "Error",
+              "An unexpected error occurred. Please try again.",
+              "error"
+            );
+          }
+        } else if (error.request) {
+          // Request was made but no response received
+          setError(
+            "No response from server. Please check your network connection."
+          );
+          Swal.fire(
+            "Error",
+            "No response from server. Please check your network connection.",
+            "error"
+          );
+        } else {
+          // Something else happened in setting up the request
+          setError("Error in setting up the request.");
+          Swal.fire("Error", "Error in setting up the request.", "error");
+        }
       }
     }
   }
-
   // _______________________________________________________
 
   function validationRegisterForm() {
@@ -83,7 +142,7 @@ export default function Signup() {
         ) : (
           " "
         )}
-        <form onSubmit={submitRegisterFrom}>
+        <form onSubmit={submitRegisterForm}>
           <label htmlFor="first_name">First Name</label>
           <input
             onChange={debounce(getUserData, waitTime)}

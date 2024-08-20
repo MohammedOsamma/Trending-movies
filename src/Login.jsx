@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Joi from "joi";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 // _______________________________________________________________
 
 export default function Login({ isLodaingHandler }) {
@@ -28,14 +29,33 @@ export default function Login({ isLodaingHandler }) {
     if (validateResult.error) {
       setErrorList(validateResult.error.details);
     } else {
-      let { data } = await Axios.post("http://localhost:5000/signin", user);
-      if (data.message === "User signed in successfully") {
-        localStorage.setItem("userToken", data.token);
-        isLodaingHandler();
-        navigate("/home");
-        console.log(data);
-      } else {
-        setError(data.message); // Set the error state with the response message
+      try {
+        let { data } = await Axios.post("http://localhost:5000/signin", user);
+        if (data.message === "User signed in successfully") {
+          localStorage.setItem("userToken", data.token);
+          isLodaingHandler();
+          navigate("/home");
+        }
+      } catch (error) {
+        if (error.response) {
+          if (error.response.status === 400) {
+            Swal.fire("Error", error.response.data.message, "error");
+          } else if (error.response.status === 404) {
+            Swal.fire("Error", error.response.data.message);
+          } else {
+            Swal.fire(
+              "Error",
+              "An unexpected error occurred. Please try again.",
+              "error"
+            );
+          }
+        } else if (error.request) {
+          Swal.fire(
+            "Error",
+            "No response from server. Please check your network connection.",
+            "error"
+          );
+        }
       }
     }
   };
